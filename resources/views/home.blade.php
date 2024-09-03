@@ -7,7 +7,7 @@
 <br>
 <div class="row gx-5 justify-content-center">
 
-    <!--Case Cards-->
+    <!-- Create Batches-->
     <div class="col-lg-6 col-xl-4">
         <div class="card mb-5 mb-xl-0" style="min-height: 490px">
             <div class="card-body p-5">
@@ -22,7 +22,7 @@
         </div>
     </div>
     
-    <!-- Daily Registers-->
+    <!-- View Batches-->
     <div class="col-lg-6 col-xl-4">
         <div class="card mb-5 mb-xl-0" style="min-height: 490px">
             <div class="card-body p-5">

@@ -18,11 +18,14 @@ use App\Models\Test;
 use App\Models\YesNo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PatientVisitController extends Controller
 {
+	//New patient visit page
     public function new($id, $drid)
     {
+		//Retrieval of values for dropdown
         $dailyregister = DailyRegister::find($drid);
         $patient = Patient::find($id);
         $clinic = Facility::all();
@@ -39,26 +42,33 @@ class PatientVisitController extends Controller
         $vasdonereferred = DoneReferred::all();
         $pregnancytest = PregnancyTest::all();
 
+		//Compacting all variables
         $variables = compact('drid', 'dailyregister', 'patient', 'yesno', 'seenby', 'iucdinsert', 'iucdexp', 'test', 'prostatetest', 'papsmear', 'prostatereport', 'tldonereferred', 'vasdonereferred', 'pregnancytest', 'clinic', 'casetype');
 
         return view('newpatientvisit', $variables);
     }
 
+	//Page to view records for a specific daily register
     public function view($dailyregisterid)
     {
+		//Get patient visit records for corresponding Daily Register
         $records = PatientVisit::where('DailyRegisterID', $dailyregisterid)
             ->join('patient', 'patientvisits.PatCliNumber', '=', 'patient.PatCliNumber')
             ->select('patientvisits.*', 'patient.FirstName as FirstName', 'patient.LastName as LastName', 'patient.RegistrationNumber as RegistrationNumber')
             ->get();
-        // dd($records);
+		
+		//Different method to parse variables to view
         return view('viewpatientvisits', ['records' => $records], ['dailyregisterid' => $dailyregisterid]);
     }
 
+	//Insert new patient visit into database
     public function createPatientVisit(Request $request, $dailyregisterid)
     {
-        $now = Carbon::now();
+		//Get current time
+        $now = Carbon::now('AST');
         $now = $now->format('Y-m-d H:i:s');
 
+		//Create new record
         PatientVisit::create([
             'DailyRegisterID' => $dailyregisterid,
             'PatCliNumber' => $request->input('PatCliNumber'),
@@ -82,20 +92,25 @@ class PatientVisitController extends Controller
             'Other' => $request->input('Other'),
             'TransferType' => $request->input('TransferType'),
             'DateCreated' => $now,
-            'CreatedBy' => $request->input('user'),
+            'CreatedBy' => "MOH\\". strtolower(Auth::user()->samaccountname[0]),
             'DateModified' => $now,
-            'ModifiedBy' => $request->input('user'),
+            'ModifiedBy' => "MOH\\". strtolower(Auth::user()->samaccountname[0]),
 
         ]);
+		
+		//Redirect with success message
         return redirect()->route('viewpatientvisits', ['id' => $dailyregisterid])->with('success', 'Record entered successfully.');
     }
 
+	//Page to edit patient visit
     public function edit($id)
     {
 
         $patientvisit = PatientVisit::find($id);
         $patient = Patient::find($patientvisit->PatCliNumber);
         $dailyregister = DailyRegister::find($patientvisit->DailyRegisterID);
+		
+		//Format date so that is is compatible with default date picker
         $formattedDate = Carbon::parse($dailyregister->Date)->format('Y-m-d');
         $dailyregister->formattedDate = $formattedDate;
 
@@ -122,9 +137,10 @@ class PatientVisitController extends Controller
         return view('editpatientvisit', $variables);
     }
 
+	//Update of edited record
     public function update(Request $request)
     {
-        $now = Carbon::now();
+        $now = Carbon::now('AST');
         $now = $now->format('Y-m-d H:i:s');
 
         PatientVisit::where('PatientVisitID', $request->input('PatientVisitID'))->update([
@@ -148,12 +164,13 @@ class PatientVisitController extends Controller
             'Other' => $request->input('Other'),
             'TransferType' => $request->input('TransferType'),
             'DateModified' => $now,
-            'ModifiedBy' => $request->input('user'),
+            'ModifiedBy' => "MOH\\". strtolower(Auth::user()->samaccountname[0]),
         ]);
 
         return redirect()->route('viewpatientvisits', ['id' => $request->input('DailyRegisterID')])->with('success', 'Record updated successfully.');
     }
-
+	
+	//Delete patient visit
     public function destroy($id, $drid)
     {
         $patientvisit = PatientVisit::find($id);

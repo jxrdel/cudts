@@ -18,13 +18,19 @@ use App\Models\Test;
 use App\Models\YesNo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DailyRegisterController extends Controller
 {
     public function index()
     {
+		//Retrieves Facilities from Facility table and orders it by Facility name in descending order for the dropdown
         $clinics = Facility::orderBy('FacilityName', 'asc')->get();
+		
+		//Compact variables to be sent to the view
         $variables = compact('clinics');
+		
+		//Redirect to view with the variables
         return view('dailyregistersearch', $variables);
     }
 
@@ -39,6 +45,7 @@ class DailyRegisterController extends Controller
 
     public function new($id, $drid)
     {
+		//Retrieval of values for dropdown
         $dailyregister = DailyRegister::find($drid);
         $patient = Patient::find($id);
         $clinic = Facility::all();
@@ -55,25 +62,30 @@ class DailyRegisterController extends Controller
         $vasdonereferred = DoneReferred::all();
         $pregnancytest = PregnancyTest::all();
 
+		//Compacting all variables
         $variables = compact('dailyregister', 'patient', 'yesno', 'seenby', 'iucdinsert', 'iucdexp', 'test', 'prostatetest', 'papsmear', 'prostatereport', 'tldonereferred', 'vasdonereferred', 'pregnancytest', 'clinic', 'casetype');
 
+		//Redirect to view with variables
         return view('newdailyregister', $variables);
     }
 
     public function createDailyRegister(Request $request)
     {
-        $now = Carbon::now();
+		//Get current time
+        $now = Carbon::now('AST');
         $now = $now->format('Y-m-d');
 
+		//Create new record
         $newRecord = DailyRegister::create([
             'Date' => $request->input('Date'),
             'FacilityID' => $request->input('FacilityID'),
             'DateCreated' => $now,
-            'CreatedBy' => $request->input('user'),
+            'CreatedBy' => "MOH\\". strtolower(Auth::user()->samaccountname[0]),
             'DateModified' => $now,
-            'ModifiedBy' => $request->input('user'),
+            'ModifiedBy' => "MOH\\". strtolower(Auth::user()->samaccountname[0]),
         ]);
 
+		//Redirect with success message
         return redirect()->route('dailyregistersearch')->with('success', 'Daily register created successfully.');
     }
 
@@ -90,14 +102,14 @@ class DailyRegisterController extends Controller
 
     public function update(Request $request)
     {
-        $now = Carbon::now();
+        $now = Carbon::now('AST');
         $now = $now->format('Y-m-d');
 
         DailyRegister::where('DailyRegisterID', $request->input('DailyRegisterID'))->update([
             'Date' => $request->input('Date'),
             'FacilityID' => $request->input('FacilityID'),
             'DateModified' => $now,
-            'ModifiedBy' => $request->input('user'),
+            'ModifiedBy' => "MOH\\". strtolower(Auth::user()->samaccountname[0]),
         ]);
 
         return redirect()->route('dailyregistersearch')->with('success', 'Daily register edited successfully.');

@@ -25,19 +25,19 @@
     </div>
 
 
-    <input type="text" name="user" value="user" style="display: none">
+    <input type="text" name="user" value="{{$_SERVER['AUTH_USER']}}" style="display: none">
     <input type="text" name="DailyRegisterID" value="{{$drid}}" style="display: none">
     <input type="text" name="PatCliNumber" value="{{$patient->PatCliNumber}}" style="display: none">
     <div style="margin-bottom:10px" class="p-3 text-primary-emphasis border border-body-subtle rounded-3">
         <div class="row" style="display: flex; justify-content:space-between;">
 
             <div class="col">
-                <label for="title">Case Card Date &nbsp;</label>
+                <label for="title">Case Card Date: &nbsp;</label>
                 @php
                     $casecarddate = $dailyregister->Date;
                     $casecarddate = \Carbon\Carbon::parse($casecarddate)->format('Y-m-d');
                 @endphp
-                <input type="date" name="Date" value="{{$casecarddate}}" disabled>
+				<strong>{{$casecarddate}}</strong>
             </div>
 
             <div class="col" style="text-align: end">
@@ -46,7 +46,7 @@
                 <select name="FacilityID" disabled>
                             
                     @foreach ($clinic as $clinic)
-                            <option value="{{ $clinic->FacilityID }}" {{ $clinic->FacilityID == $dailyregister->FacilityID ? 'selected' : '' }}>{{ $clinic->FacilityName }}</option>
+                            <option value="{{ $clinic->FacilityID }}" {{ $clinic->FacilityID == $dailyregister->FacilityID ? 'selected' : '' }}>{{ $clinic->FacilityID }}: {{ $clinic->FacilityName }}</option>
                     @endforeach
     
                     
@@ -126,7 +126,7 @@
                         <option value=""></option>
                                 
                         @foreach ($seenby as $seenby)
-                                <option value="{{ $seenby->SeenByID }}">{{ $seenby->SeenBy }}</option>
+                                <option value="{{ $seenby->SeenByID }}">{{ $seenby->SeenByID }} {{ $seenby->SeenBy }}</option>
                         @endforeach
         
                     </select>

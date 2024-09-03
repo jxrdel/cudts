@@ -26,7 +26,7 @@
 
             @foreach($userRecords as $user)
             @php
-                $rowsum = $user->usercount + $user->caseCardCount + $user->dailyRegisterCount;
+                $rowsum = $user->usercount + $user->caseCardCount;
                 $rowsumTotal = $rowsumTotal + $rowsum;
                 $pvisitTotal = $pvisitTotal + $user->usercount;
                 $ccTotal = $ccTotal + $user->caseCardCount;
@@ -39,13 +39,15 @@
                 </tr>
             @endforeach
             
+        </tbody>
+		<tfoot>
             <tr>
                 <td><strong>Total</strong></td> 
                 <td><strong>{{$pvisitTotal}}</strong></td>
                 <td><strong>{{$ccTotal}}</td>
                 <td><strong>{{$rowsumTotal}}</strong></td>
             </tr>
-        </tbody>
+		</tfoot>
     </table>
     
 </div>

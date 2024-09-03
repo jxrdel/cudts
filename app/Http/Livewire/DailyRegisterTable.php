@@ -135,9 +135,9 @@ final class DailyRegisterTable extends PowerGridComponent
             Filter::inputText('DailyRegisterID')->operators(['contains']),
             // Filter::inputText('FacilityName')->operators(['contains']),
             Filter::select('FacilityName', 'FacilityName')
-                ->dataSource(Facility::select('*')->get())
+                ->dataSource(Facility::all())
                 ->optionValue('FacilityName')
-                ->optionLabel('FacilityID'),
+                ->optionLabel('FacilityName'),
         ];
     }
 

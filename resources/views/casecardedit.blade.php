@@ -1,9 +1,9 @@
 @extends('layout')
 @section('main')
 <div class="container">
-    @if ($patient)
 
-    <div class="modal fade modal-sm" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    @if ($patient)
+		<div class="modal fade modal-sm" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -40,8 +40,7 @@
         
     
     
-    
-    <input type="text" name="user" value="useredit" style="display: none">
+    <input type="text" name="user" value="{{$_SERVER['AUTH_USER']}}" style="display: none">
     <div style="padding-bottom: 10px" class="p-3 text-body-emphasis border border-body-subtle rounded-3">
 
         <div class="row" style="display: flex; justify-content:space-between;">
@@ -495,7 +494,7 @@
             
             <div class="col">
                 <label for="title">Year of last pregnancy &nbsp;</label>
-                <input type="text" name="YrLastPregnacy" value="{{$patient->YrLastPregnacy}}" style="width: 100px">
+                <input type="text" name="YrLastPregnancy" value="{{$patient->YrLastPregnancy}}" style="width: 100px">
             </div>
 
             <div class="col">
@@ -505,7 +504,7 @@
 
             <div class="col" style="text-align: end">
                 <label for="title">Outcome of last pregnancy &nbsp;</label>
-                <select name="OutLastPrenancy" >
+                <select name="OutLastPregnancy" >
                     @php
                         $selectedOutLastPrenancy = $patient->OutLastPrenancy;
                     @endphp
@@ -611,17 +610,9 @@
                     @endphp
     
     
-                    @if (is_null($selectedContraceptionUsed) || $selectedContraceptionUsed == '9')
-                        @foreach ($contraceptives as $contraceptive)
-                        {{-- If value is null, set dropdown value to 'Not Stated' --}}
-                            <option value="{{ $contraceptive->ContraceptiveTypeID }}" {{ $contraceptive->ContraceptiveType  == 'Not Stated' ? 'selected' : '' }}>{{ $contraceptive->ContraceptiveTypeID }} {{ $contraceptive->ContraceptiveType }}</option>
-                        @endforeach
-                    @else
-                        
-                        @foreach ($contraceptives as $contraceptive)
-                            <option value="{{ $contraceptive->ContraceptiveTypeID }}" {{ strpos($selectedContraceptionUsed, $contraceptive->ContraceptiveTypeID) !== false ? 'selected' : '' }}  >{{ $contraceptive->ContraceptiveTypeID }} {{ $contraceptive->ContraceptiveType }}</option>
-                        @endforeach
-                    @endif
+                     @foreach ($contraYesNo as $yesno)
+                            <option value="{{ $yesno->YesNoCode }}" {{ strpos($yesno->YesNoValue, $selectedContraceptionUsed) !== false ? 'selected' : '' }}  >{{ $yesno->YesNoValue }}</option>
+                            @endforeach
     
                     
                 </select>

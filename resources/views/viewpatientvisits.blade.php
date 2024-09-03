@@ -19,18 +19,11 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="visitModalLabel">Select a Case Card</h1>
+          <h1 class="modal-title fs-5" id="visitModalLabel">Create a Daily Register</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="col">
-            <p>Patient does not exist? <a style="" href="{{ route('newcasecard') }}"> Create a Case Card</a></p>
-          </div>
-            
-          @livewire('patient-table', ['dailyregisterid' => $dailyregisterid])
-
-            
-
+            @livewire('patient-table', ['dailyregisterid' => $dailyregisterid])
         </div>
       </div>
     </div>
@@ -39,7 +32,7 @@
       <thead>
           <tr>
               <th>Patient Visit</th>
-              <th>Registraiton Number</th>
+              <th>Registration Number</th>
               <th>First Name</th>
               <th>Last Name</th>
               <th>Edit</th>
@@ -64,7 +57,6 @@
 @endsection
 
 @section('scripts')
-{{-- Displays notification if action was successful --}}
 @if (Session::has('success'))
 
   <script>
@@ -80,7 +72,5 @@
     <script>
       new DataTable('#visitTable');
     </script>
-
-    
 @endsection
 

@@ -124,24 +124,25 @@ final class PatientTable extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('RegistrationNumber', 'RegistrationNumber')
+            Column::make('Registration Number', 'RegistrationNumber')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('FirstName', 'FirstName')
+            Column::make('First Name', 'FirstName')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('LastName', 'LastName')
+            Column::make('Last Name', 'LastName')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('ClinicNo', 'ClinicNo')
+            Column::make('Clinic #', 'ClinicNo')
                 ->searchable(),
 
-            Column::make('FacilityName', 'FacilityName')
+            Column::make('Facility Name', 'FacilityName')
                 ->sortable()
                 ->searchable(),
+
 
         ];
     }
@@ -158,7 +159,6 @@ final class PatientTable extends PowerGridComponent
             Filter::inputText('FirstName')->operators(['contains']),
             Filter::inputText('LastName')->operators(['contains']),
             Filter::inputText('ClinicNo')->operators(['contains']),
-            Filter::inputText('FacilityName')->operators(['contains']),
         ];
     }
 

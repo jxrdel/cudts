@@ -8,8 +8,8 @@
             href="#"> <i class="bi bi-plus-lg"></i> Create a Daily Register</a>
         </div>
     </div>
-
-  <div class="row">
+	
+	<div class="row">
     <div class="col" style="text-align: end">
       <a href="#"><i class="bi bi-question-circle-fill link-primary" data-bs-toggle="modal" data-bs-target="#helpModal"></i></a>
     </div>
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-
+  
   <!-- Modal -->
   <div class="modal fade modal-sm" id="patientModal" tabindex="-1" aria-labelledby="patientModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -47,7 +47,7 @@
                 @csrf
                 @method('PUT')
                 <div class="mb-3">
-                  <input type="text" value="user" name="user" style="display: none">
+                  <input type="text" value="{{$_SERVER['AUTH_USER']}}" name="user" style="display: none">
                   <label for="registerDate" class="form-label">Date</label>
                   <input type="date" class="form-control" id="Date" name="Date" required>
                   <div id="EmailHelp" class="form-text">Select a date for the daily register</div>
@@ -57,7 +57,7 @@
                     <select name="FacilityID" class="form-select">
                             
                         @foreach ($clinics as $clinic)
-                                <option value="{{ $clinic->FacilityID }}">{{ $clinic->FacilityName }}</option>
+                                <option value="{{ $clinic->FacilityID }}">{{ $clinic->FacilityID }} - {{ $clinic->FacilityName }}</option>
                         @endforeach
         
                         
@@ -70,6 +70,7 @@
     </div>
   </div>
 
+  
   <table id="dailyregisterSearchTable" class="table table-bordered table-hover" style="">
     <thead>
         <tr>
@@ -82,12 +83,12 @@
         </tr>
     </thead>
 </table>
-
-  {{-- Livewire Table Component that has displays Daily Registers. (Found in app/http/livewire/DailyRegisterTable)   --}}
+  
 </div>
 @endsection
 
 @section('scripts')
+
 <script>
   // Initialize DataTable
   $(document).ready(function() {
@@ -161,6 +162,7 @@
           return (mindate < inputDateObject) && (inputDateObject < maxdate);
       }
 </script>
+
 {{-- Displays notification if action was successful --}}
 @if (Session::has('success'))
 

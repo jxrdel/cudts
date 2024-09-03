@@ -53,7 +53,7 @@ class Patient extends Model
         'NumPregnancies',
         'NumLiveBirths',
         'NumChildAlive',
-        'YrLastPregnacy',
+        'YrLastPregnancy',
         'GestWeeks',
         'OutLastPrenancy',
         'ChildMore',
@@ -69,9 +69,4 @@ class Patient extends Model
         'DateModified',
         'ModifiedBy',
     ];
-
-    public function patientvisits()
-    {
-        return $this->hasMany(PatientVisit::class);
-    }
 }

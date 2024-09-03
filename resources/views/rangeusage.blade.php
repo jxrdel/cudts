@@ -38,14 +38,15 @@
                     <td><strong>{{$rowsum}}</strong></td>
                 </tr>
             @endforeach
-            
+        </tbody>
+		<tfoot>
             <tr>
                 <td><strong>Total</strong></td> 
                 <td><strong>{{$pvisitTotal}}</strong></td>
                 <td><strong>{{$ccTotal}}</td>
                 <td><strong>{{$rowsumTotal}}</strong></td>
             </tr>
-        </tbody>
+		</tfoot>
     </table>
     
 </div>

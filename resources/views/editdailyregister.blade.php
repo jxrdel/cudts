@@ -11,7 +11,7 @@
                     @csrf
                     @method('PUT')
                     <div class="card-body">
-                        <input type="text" name="user" value="useredit" style="display: none">
+                        <input type="text" name="user" value="{{$_SERVER['AUTH_USER']}}" style="display: none">
                         <input type="text" name="DailyRegisterID" value="{{$dailyregister->DailyRegisterID}}" style="display: none">
                         <h5 class="card-title">Date</h5>
                         <input class="form-control form-control-lg" name="Date" type="date" value="{{$dailyregister->formattedDate}}" aria-label=".form-control-lg example">

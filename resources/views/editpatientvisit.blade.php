@@ -27,7 +27,7 @@
         </div>
     
     
-        <input type="text" name="user" value="usermodified" style="display: none">
+        <input type="text" name="user" value="{{$_SERVER['AUTH_USER']}}" style="display: none">
         <input type="text" name="PatCliNumber" value="{{$patientvisit->PatCliNumber}}" style="display: none">
         <input type="text" name="DailyRegisterID" value="{{$patientvisit->DailyRegisterID}}" style="display: none">
         <input type="text" name="PatientVisitID" value="{{$patientvisit->PatientVisitID}}" style="display: none">
@@ -41,7 +41,7 @@
                         $casecarddate = \Carbon\Carbon::parse($casecarddate)->format('Y-m-d');
                     @endphp
                     <label for="title">Case Card Date: &nbsp;</label>
-                    <input type="date" name="Date" value="{{$casecarddate}}" disabled>
+					<strong>{{$casecarddate}}</strong>
                 </div>
     
                 <div class="col" style="text-align: end">
@@ -54,7 +54,7 @@
                         @endphp
                                 
                         @foreach ($clinic as $clinic)
-                                <option value="{{ $clinic->FacilityID }}" {{ $selectedFacilityID == $clinic->FacilityID ? 'selected' : '' }}>{{ $clinic->FacilityName }}</option>
+                                <option value="{{ $clinic->FacilityID }}" {{ $selectedFacilityID == $clinic->FacilityID ? 'selected' : '' }}>{{ $clinic->FacilityID }}: {{ $clinic->FacilityName }}</option>
                         @endforeach
         
                         
@@ -143,7 +143,7 @@
                             @endphp
                                     
                             @foreach ($seenby as $seenby)
-                                    <option value="{{ $seenby->SeenByID }}" {{ $selectedSeenBy == $seenby->SeenByID ? 'selected' : '' }}>{{ $seenby->SeenBy }}</option>
+                                    <option value="{{ $seenby->SeenByID }}" {{ $selectedSeenBy == $seenby->SeenByID ? 'selected' : '' }}>{{ $seenby->SeenByID }} {{ $seenby->SeenBy }}</option>
                             @endforeach
             
                         </select>

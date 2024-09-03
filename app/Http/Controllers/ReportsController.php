@@ -14,14 +14,14 @@ class ReportsController extends Controller
     {
 
         $userRecords = PatientVisit::select('ModifiedBy', DB::raw('count(*) as usercount'))
-            ->whereDate('DateCreated', $date)
+            ->whereDate('DateModified', $date)
             ->groupBy('ModifiedBy')
             ->get();
 
         if ($userRecords) {
             foreach ($userRecords as $user) {
                 $caseCardCount = Patient::select('ModifiedBy', DB::raw('count(*) as casecardcount'))
-                    ->whereDate('DateCreated', $date)
+                    ->whereDate('DateModified', $date)
                     ->where('ModifiedBy', $user->ModifiedBy)
                     ->groupBy('ModifiedBy')
                     ->get();
@@ -31,7 +31,7 @@ class ReportsController extends Controller
                 }
 
                 $dailyRegisterCount = DailyRegister::select('ModifiedBy', DB::raw('count(*) as dailyregistercount'))
-                    ->whereDate('DateCreated', $date)
+                    ->whereDate('DateModified', $date)
                     ->where('ModifiedBy', $user->ModifiedBy)
                     ->groupBy('ModifiedBy')
                     ->get();
@@ -81,11 +81,11 @@ class ReportsController extends Controller
         return view('rangeusage', compact('userRecords', 'startdate', 'enddate'));
     }
 
-    public function getDailyUsage(Request $request)
-    {
-        $date = $request->input('date');
+    // public function getDailyUsage(Request $request)
+    // {
+    //     $date = $request->input('date');
 
-        $userRecords = PatientVisit::whereDate('DateCreated', $date)
-            ->get();
-    }
+    //     $userRecords = PatientVisit::whereDate('DateCreated', $date)
+    //         ->get();
+    // }
 }

@@ -43,9 +43,4 @@ class PatientVisit extends Model
         'DateModified',
         'ModifiedBy',
     ];
-
-    public function patientvisits()
-    {
-        return $this->belongsTo(Patient::class);
-    }
 }

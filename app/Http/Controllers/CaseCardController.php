@@ -20,38 +20,89 @@ use App\Models\PregnancyOutcome;
 use App\Models\Religion;
 use App\Models\UnionStatus;
 use App\Models\YesNo;
-use App\Rules\PatientRegNo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Rules\ValidateRegNo;
+use Illuminate\Support\Facades\Auth;
 
 class CaseCardController extends Controller
 {
+	//Launch case card search page
     public function index()
     {
         return view('casecardsearch');
     }
 
+	//Populate datatable
     public function getCaseCards()
     {
         $query = Patient::select('PatCliNumber', 'RegistrationNumber', 'FirstName', 'LastName', 'ClinicNo', 'facility.FacilityName as FacilityName')
             ->join('facility', 'patient.ClinicNo', '=', 'facility.FacilityID');
-        // return datatables($query)->make(true);
-        return DataTables::of($query)->make(true);
+        return datatables($query)->make(true);
 
-        // return DataTables::of($query)->toJson();
     }
 
+
+	//New case card page
+    public function new()
+    {
+		//Variables for new case card page
+        $clinics = Facility::orderBy('FacilityName', 'asc')->get();
+        $countries = Country::all();
+        $sexes = Sex::all();
+        $ethnicities = Ethnicity::all();
+        $religions = Religion::all();
+        $edulevels = EduLevel::all();
+        $unionstatuses = UnionStatus::all();
+        $employeestatuses = EmpStatus::all();
+        $houseincoccs = HouseIncOcc::all();
+        $houseincranges = HouseIncRange::all();
+        $clinicinfluences = ClinicInfluence::all();
+        $pregnancyoutcomes = PregnancyOutcome::all();
+        $contraceptives = ContraceptiveType::all();
+        $yesno = YesNo::all();
+        $contraYesNo = YesNo::all();
+        $infertilityYesNo = YesNo::all();
+
+		//Compacting all variables to send to view
+        $combined = compact(
+            'clinics',
+            'countries',
+            'sexes',
+            'ethnicities',
+            'religions',
+            'edulevels',
+            'unionstatuses',
+            'employeestatuses',
+            'houseincoccs',
+            'houseincranges',
+            'clinicinfluences',
+            'pregnancyoutcomes',
+            'yesno',
+            'infertilityYesNo',
+			'contraYesNo',
+            'contraceptives'
+        );
+
+        return view('newcasecard', $combined);
+    }
+	
+	//Edit case card page
     public function edit($id)
     {
-        $currentage = NULL;
+		//Get patient to be edited
         $patient = Patient::find($id);
+		
+		//Get current age
+        $currentage = NULL;
 
         if ($patient->DateOfBirth !== null || $patient->DateOfBirth !== '') {
             $dob = Carbon::parse($patient->DateOfBirth);
-            $now = Carbon::now();
+            $now = Carbon::now('AST');
             $currentage = $dob->diffInYears($now);
         }
 
+		//Format dates to be compatible with date picker
         if ($patient) {
 
             $formattedDOB = Carbon::parse($patient->DateOfBirth)->format('Y-m-d');
@@ -61,8 +112,9 @@ class CaseCardController extends Controller
             $patient->formattedCaseCardDate = $formattedCaseCardDate;
         }
 
+		//Retrieve values for view
         $patientid = $id;
-        $clinics = Facility::all();
+        $clinics = Facility::orderBy('FacilityName', 'asc')->get();
         $countries = Country::all();
         $sexes = Sex::all();
         $ethnicities = Ethnicity::all();
@@ -76,9 +128,11 @@ class CaseCardController extends Controller
         $pregnancyoutcomes = PregnancyOutcome::all();
         $contraceptives = ContraceptiveType::all();
         $contraceptivetypes = ContraceptiveType::all();
+        $contraYesNo = YesNo::all();
         $yesno = YesNo::all();
         $infertilityYesNo = YesNo::all();
 
+		//Compact variables for view
         $combined = compact(
             'patientid',
             'patient',
@@ -98,57 +152,20 @@ class CaseCardController extends Controller
             'infertilityYesNo',
             'contraceptives',
             'contraceptivetypes',
+			'contraYesNo',
             'currentage'
         );
 
+		//Redirect to view with variables
         if ($patient) {
             return view('casecardedit', $combined);
         }
     }
 
-    public function new()
-    {
-
-        $clinics = Facility::orderBy('FacilityName', 'asc')->get();
-        $countries = Country::all();
-        $sexes = Sex::all();
-        $ethnicities = Ethnicity::all();
-        $religions = Religion::all();
-        $edulevels = EduLevel::all();
-        $unionstatuses = UnionStatus::all();
-        $employeestatuses = EmpStatus::all();
-        $houseincoccs = HouseIncOcc::all();
-        $houseincranges = HouseIncRange::all();
-        $clinicinfluences = ClinicInfluence::all();
-        $pregnancyoutcomes = PregnancyOutcome::all();
-        $contraceptives = ContraceptiveType::all();
-        $yesno = YesNo::all();
-        $infertilityYesNo = YesNo::all();
-
-        $combined = compact(
-            'clinics',
-            'countries',
-            'sexes',
-            'ethnicities',
-            'religions',
-            'edulevels',
-            'unionstatuses',
-            'employeestatuses',
-            'houseincoccs',
-            'houseincranges',
-            'clinicinfluences',
-            'pregnancyoutcomes',
-            'yesno',
-            'infertilityYesNo',
-            'contraceptives'
-        );
-
-        return view('newcasecard', $combined);
-    }
-
+	//Update edited case card
     public function update(Request $request, $id)
     {
-        $now = Carbon::now();
+        $now = Carbon::now('AST');
         $now = $now->format('Y-m-d H:i:s');
 
         Patient::where('PatCliNumber', $id)->update([
@@ -182,9 +199,9 @@ class CaseCardController extends Controller
             'NumPregnancies' => $request->input('NumPregnancies'),
             'NumLiveBirths' => $request->input('NumLiveBirths'),
             'NumChildAlive' => $request->input('NumChildAlive'),
-            'YrLastPregnancy' => $request->input('YrLastPregnacy'),
+            'YrLastPregnancy' => $request->input('YrLastPregnancy'),
             'GestWeeks' => $request->input('GestWeeks'),
-            'OutLastPregnancy' => $request->input('OutLastPrenancy'),
+            'OutLastPregnancy' => $request->input('OutLastPregnancy'),
             'ChildMore' => $request->input('ChildMore'),
             'ChildHave' => $request->input('ChildHave'),
             'ChildHaveNodata' => $request->input('ChildHaveNodata'),
@@ -194,23 +211,25 @@ class CaseCardController extends Controller
             'ContraceptionUsed' => $request->input('ContraceptionUsed'),
             'ContraceptionType' => $request->input('ContraceptionType'),
             'DateModified' => $now,
-            'ModifiedBy' => $request->input('useredit'),
+            'ModifiedBy' => "MOH\\". strtolower(Auth::user()->samaccountname[0]),
 
         ]);
 
+		//Redirect with success message
         return redirect()->route('casecardsearch')->with('success', 'Record edited successfully.');
     }
 
+	//Create new case card record
     public function createCaseCard(Request $request)
     {
 
-        $now = Carbon::now();
+        $now = Carbon::now('AST');
         $now = $now->format('Y-m-d H:i:s');
-
-        $request->validate([
+		
+		$request->validate([
             'RegistrationNumber' => [
-                'required',
-                new PatientRegNo($request->input('ClinicNo'))
+                'required'
+                //new ValidateRegNo($request->input('ClinicNo'))
             ],
         ]);
 
@@ -245,9 +264,9 @@ class CaseCardController extends Controller
             'NumPregnancies' => $request->input('NumPregnancies'),
             'NumLiveBirths' => $request->input('NumLiveBirths'),
             'NumChildAlive' => $request->input('NumChildAlive'),
-            'YrLastPregnancy' => $request->input('YrLastPregnacy'),
+            'YrLastPregnancy' => $request->input('YrLastPregnancy'),
             'GestWeeks' => $request->input('GestWeeks'),
-            'OutLastPregnancy' => $request->input('OutLastPrenancy'),
+            'OutLastPregnancy' => $request->input('OutLastPregnancy'),
             'ChildMore' => $request->input('ChildMore'),
             'ChildHave' => $request->input('ChildHave'),
             'ChildHaveNodata' => $request->input('ChildHaveNodata'),
@@ -257,28 +276,27 @@ class CaseCardController extends Controller
             'ContraceptionUsed' => $request->input('ContraceptionUsed'),
             'ContraceptionType' => $request->input('ContraceptionType'),
             'DateCreated' => $now,
-            'CreatedBy' => $request->input('user'),
+            'CreatedBy' => "MOH\\". strtolower(Auth::user()->samaccountname[0]),
             'DateModified' => $now,
-            'ModifiedBy' => $request->input('user'),
+            'ModifiedBy' => "MOH\\". strtolower(Auth::user()->samaccountname[0]),
         ]);
 
         return redirect()->route('casecardsearch')->with('success', 'Case card entered successfully.');
     }
-
-    public function destroy($id)
+	
+	//Delete case card
+	public function destroy($id)
     {
         $patient = Patient::find($id);
 
-        PatientVisit::where('PatCliNumber', $id)->delete();
+        $patientvisits = PatientVisit::where('PatCliNumber', $id)->get();
+
+        if($patientvisits){
+            PatientVisit::where('PatCliNumber', $id)->delete();
+        }
 
         $patient->delete();
 
-        return redirect()->route('casecardsearch')->with('success', 'Case Card deleted successfully.');
-        // return redirect()->route('casecardsearch');
-    }
-
-    public function successRedirect()
-    {
         return redirect()->route('casecardsearch')->with('success', 'Case Card deleted successfully.');
     }
 }

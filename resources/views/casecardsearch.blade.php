@@ -1,8 +1,7 @@
 @extends('layout')
 @section('main')
 
-@include('modals.deletecasecardmodal')
-<div class="container px-5 my-5">
+<div class="container-fluid px-5 my-5">
     <div class="row" style="display: flex; justify-content:space-between;margin-top:10px">
             
         <div class="col" style="text-align: center">
@@ -11,7 +10,7 @@
     </div>
     
     {{-- <livewire:case-card-table/> --}}
-    <table id="caseCardSearchTable" class="table table-bordered table-hover" style="">
+    <table id="caseCardSearchTable" class="table table-striped table-bordered" style="">
         <thead>
             <tr>
                 <th>Registration Number</th>
@@ -22,7 +21,6 @@
                 <th>Edit</th>
             </tr>
         </thead>
-        <tbody></tbody>
     </table>
 
     
@@ -76,7 +74,6 @@
             });
 
     
-
 </script>
     
 @endsection
